@@ -60,7 +60,7 @@ void imprimirLista(Lista lista) {
 //aqui cree la funcion de leerarchivo para poder leer el archivo de entrada y obtener los datos de estos
 Lista leerArchivo()
 {
-    FILE *file = fopen("datos1.txt", "r");
+    FILE *file = fopen("datos2.txt", "r");
     if (file == NULL)
     {
         printf("No se pudo leer el archivo");
@@ -157,8 +157,6 @@ void asignar(Lista ordenada, Lista *asignar, Lista *espera, int * conta){
     }
 
     * conta = contador;
-    printf("Asignadas: %i\n", contador);
-    printf("Pendientes: %i\n", 50-contador);
 }
 
 void archivoAsignacion (Lista asignacion, int contador){
@@ -170,15 +168,13 @@ void archivoAsignacion (Lista asignacion, int contador){
     }
 
     while (asignacion != NULL){
-        fprintf(archivo, "%s,%s\n", asignacion -> rut, asignacion -> nombreApellido);
+        fprintf(archivo, "%s,%s,%i\n", asignacion -> rut, asignacion -> nombreApellido, asignacion ->numeroEntradas);
         asignacion = asignacion -> sig;
     }
 
     fprintf(archivo,"Asignadas: %i\nPendientes: %i\n", contador, 50-contador);
     // Cerrar el archivo
     fclose(archivo);
-
-    printf("Archivo creado exitosamente\n");
 }
 
 void archivoEspera (Lista espera){
@@ -195,25 +191,23 @@ void archivoEspera (Lista espera){
         espera = espera -> sig;
     }
     fclose(archivo);
-
-    printf("Archivo creado exitosamente\n");
     }
 }
 // funcion main para poder ejecutar el algoritmo
+void nombreArchivo(){
+    
+}
 int main()
 {
-    Lista clientes = leerArchivo();
-    Lista ordenado = clientesOrden(clientes);
-    Lista espera = nuevaLista();
-    Lista asignacion = nuevaLista();
+    Lista clientes, ordenado, espera, asignacion;
+    clientes = leerArchivo();
+    ordenado = clientesOrden(clientes);
+    espera = nuevaLista();
+    asignacion = nuevaLista();
     int contador = 0;
-    //Lista asignacion = nuevaLista();
     asignar(ordenado, &asignacion, &espera, &contador);
-    imprimirLista(asignacion);
     archivoAsignacion(asignacion, contador);
     archivoEspera(espera);
-
-
     return 0;
 }
 
