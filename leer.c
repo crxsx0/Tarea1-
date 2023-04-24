@@ -86,28 +86,17 @@ void clientesOrden (Lista clientes){
                 aux -> numeroEntradas = aux ->numeroEntradas + temp->numeroEntradas;
                 Lista eliminar = temp;
                 temp = temp -> sig;
-                int salir = 0;
-                while (salir = 0)
-                {
-                    if (aux -> sig == eliminar)
-                    {
-                        //Lista delete = aux -> sig;
-                        aux -> sig = temp;
-                        
-                        printf("pase por el if");
-                        salir = 1;
-                    }
-                    else{
-                        aux = aux -> sig;
-                    }
-                }
                 free(eliminar);
             }
             else{
                 temp = temp -> sig;
             }
         }
-        printf("El rut es %s, el nombre es %s y el numero de entradas es %d \n", aux->rut, aux->nombreApellido, aux->numeroEntradas);
+
+        //printf("esto es lo que contiene rut: %s\n", aux->rut);
+        if (aux->sig != aux){
+            printf("El rut es %s, el nombre es %s y el numero de entradas es %d \n", aux->rut, aux->nombreApellido, aux->numeroEntradas);
+        }
         aux = aux -> sig;
     }
 }
