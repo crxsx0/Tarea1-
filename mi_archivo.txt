@@ -1,0 +1,6 @@
+12333444-2,Maria Reyes
+20165233-4,Rocio Morales
+13444555-6,Pedro Diaz
+19000111-3,Jose Herrera
+Asignadas: 7
+Pendientes: 43

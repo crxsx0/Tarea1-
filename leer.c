@@ -11,6 +11,15 @@ struct persona
 };
 typedef struct persona tPersona;
 typedef tPersona *Lista;
+
+struct memoria
+{
+    Lista nombreLista;
+    struct memoria *sig;
+};
+typedef struct memoria tMemoria;
+typedef tMemoria *memList;
+
 //genere una lista
 Lista nuevaLista()
 {
@@ -27,8 +36,6 @@ void agregarNodo(Lista *listaPrincipal, char rut[11], char nombreApellido[40], i
     if (*listaPrincipal == NULL)
     {
         *listaPrincipal = nuevoElemento;
-        printf("Lista estaba vacia, se le asigno un elemento:\n");
-        //printf("El rut es %s, el nombre es %s y el número de entradas es %d \n", (*listaPrincipal)->rut, (*listaPrincipal)->nombreApellido, (*listaPrincipal)->numeroEntradas);
     }
     else
     {
@@ -73,8 +80,10 @@ Lista leerArchivo()
     return clientes;
 }
 //
-void clientesOrden (Lista clientes){
+Lista clientesOrden (Lista clientes){
     Lista aux, temp;
+    Lista listaFinal = nuevaLista();
+    memList listaEliminados;
     aux = clientes;
     while (aux !=NULL)
     {   
@@ -86,7 +95,8 @@ void clientesOrden (Lista clientes){
                 aux -> numeroEntradas = aux ->numeroEntradas + temp->numeroEntradas;
                 Lista eliminar = temp;
                 temp = temp -> sig;
-                free(eliminar);
+                //agregarNodoEliminado(&listaEliminados, eliminar);
+                strcpy(eliminar->rut, "NULL");
             }
             else{
                 temp = temp -> sig;
@@ -94,19 +104,116 @@ void clientesOrden (Lista clientes){
         }
 
         //printf("esto es lo que contiene rut: %s\n", aux->rut);
-        if (aux->sig != aux){
-            printf("El rut es %s, el nombre es %s y el numero de entradas es %d \n", aux->rut, aux->nombreApellido, aux->numeroEntradas);
+        if (strcmp(aux->rut,"NULL")){
+            //printf("El rut es %s, el nombre es %s y el numero de entradas es %d \n", aux->rut, aux->nombreApellido, aux->numeroEntradas);
+            agregarNodo(&listaFinal, aux->rut, aux->nombreApellido, aux->numeroEntradas);
         }
         aux = aux -> sig;
+    }
+
+    return listaFinal;
+}
+
+void asignar(Lista ordenada, Lista *asignar, Lista *espera, int * conta){
+    Lista orden;
+    int totalE, contador;
+    totalE = 50;
+    contador = 0;
+    orden = ordenada;
+    while (orden != NULL)
+    {
+        if(contador < 50){
+            if(orden -> numeroEntradas <= 2){
+                agregarNodo(asignar, orden ->rut, orden -> nombreApellido, orden ->numeroEntradas);
+                contador =  contador + orden->numeroEntradas;
+            }
+
+            if(orden -> numeroEntradas >= 3 && orden -> numeroEntradas <=5){
+                orden -> numeroEntradas = 2;
+                agregarNodo(asignar, orden ->rut, orden -> nombreApellido, orden ->numeroEntradas);
+                contador =  contador + orden->numeroEntradas;
+            }
+        }
+        
+        if(contador == 50){
+            contador++;
+            orden = orden -> sig;
+        }
+
+        if (contador > 50){
+            if(orden -> numeroEntradas <= 2){
+                agregarNodo(espera, orden ->rut, orden -> nombreApellido, orden ->numeroEntradas);
+            }
+            if(orden -> numeroEntradas >= 3 && orden -> numeroEntradas <=5){
+                orden -> numeroEntradas = 2;
+                agregarNodo(espera, orden ->rut, orden -> nombreApellido, orden ->numeroEntradas);
+            }
+        }
+        orden = orden -> sig;
+    }
+
+    if (contador == 51){
+        contador = contador -1;
+    }
+
+    * conta = contador;
+    printf("Asignadas: %i\n", contador);
+    printf("Pendientes: %i\n", 50-contador);
+}
+
+void archivoAsignacion (Lista asignacion, int contador){
+    FILE *archivo = fopen("mi_archivo.txt", "w"); // Abrir el archivo en modo escritura
+
+    if (archivo == NULL) {
+        printf("Error al crear el archivo\n");
+         // Salir del programa con un código de error
+    }
+
+    while (asignacion != NULL){
+        fprintf(archivo, "%s,%s\n", asignacion -> rut, asignacion -> nombreApellido);
+        asignacion = asignacion -> sig;
+    }
+
+    fprintf(archivo,"Asignadas: %i\nPendientes: %i\n", contador, 50-contador);
+    // Cerrar el archivo
+    fclose(archivo);
+
+    printf("Archivo creado exitosamente\n");
+}
+
+void archivoEspera (Lista espera){
+    if (espera != NULL){
+        FILE *archivo = fopen("espera.txt", "w"); // Abrir el archivo en modo escritura
+
+    if (archivo == NULL) {
+        printf("Error al crear el archivo\n");
+         // Salir del programa con un código de error
+    }
+
+    while (espera != NULL){
+        fprintf(archivo, "%s,%s\n", espera -> rut, espera -> nombreApellido);
+        espera = espera -> sig;
+    }
+    fclose(archivo);
+
+    printf("Archivo creado exitosamente\n");
     }
 }
 // funcion main para poder ejecutar el algoritmo
 int main()
 {
     Lista clientes = leerArchivo();
-    //imprimirLista(clientes);
-    clientesOrden(clientes);
-    //imprimirLista(clientes);
+    Lista ordenado = clientesOrden(clientes);
+    Lista espera = nuevaLista();
+    Lista asignacion = nuevaLista();
+    int contador = 0;
+    //Lista asignacion = nuevaLista();
+    asignar(ordenado, &asignacion, &espera, &contador);
+    imprimirLista(asignacion);
+    archivoAsignacion(asignacion, contador);
+    archivoEspera(espera);
+
+
     return 0;
 }
 
