@@ -74,11 +74,10 @@ Lista leerArchivo()
 }
 //
 void clientesOrden (Lista clientes){
-    Lista aux, temp, cabeza;
+    Lista aux, temp;
     aux = clientes;
     while (aux !=NULL)
     {   
-        cabeza = aux
         temp = aux->sig;
         
         while (temp != NULL)
@@ -87,16 +86,27 @@ void clientesOrden (Lista clientes){
                 aux -> numeroEntradas = aux ->numeroEntradas + temp->numeroEntradas;
                 Lista eliminar = temp;
                 temp = temp -> sig;
-                cabeza ->sig = temp;
-                
-                //printf("%s\n", eliminar->nombreApellido);
+                int salir = 0;
+                while (salir = 0)
+                {
+                    if (aux -> sig == eliminar)
+                    {
+                        //Lista delete = aux -> sig;
+                        aux -> sig = temp;
+                        
+                        printf("pase por el if");
+                        salir = 1;
+                    }
+                    else{
+                        aux = aux -> sig;
+                    }
+                }
                 free(eliminar);
             }
             else{
                 temp = temp -> sig;
             }
         }
-
         printf("El rut es %s, el nombre es %s y el numero de entradas es %d \n", aux->rut, aux->nombreApellido, aux->numeroEntradas);
         aux = aux -> sig;
     }
@@ -108,7 +118,6 @@ int main()
     //imprimirLista(clientes);
     clientesOrden(clientes);
     //imprimirLista(clientes);
-
     return 0;
 }
 
